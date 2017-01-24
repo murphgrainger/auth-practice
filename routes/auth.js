@@ -9,13 +9,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/signup', function(req, res, next) {
-    console.log(req.body);
     if (validUser(req.body)) {
-        queries.postNewUser(req.body).then(function(user) {
-            res.json(user)
-        });
+        if (queries.findUser(req.body)) {
+            resError(res, 500, 'Email already exists!')
+        } else {
+            queries.postNewUser(req.body).then(function(user) {
+                res.json(user)
+            });
+        }
     } else {
-        resError(res, 500, 'Use a valid');
+        resError(res, 500, 'Not a valid login!');
     }
 })
 
