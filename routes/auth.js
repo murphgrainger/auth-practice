@@ -10,13 +10,16 @@ router.get('/', function(req, res, next) {
 
 router.post('/signup', function(req, res, next) {
     if (validUser(req.body)) {
-        if (queries.findUser(req.body)) {
-            resError(res, 500, 'Email already exists!')
-        } else {
-            queries.postNewUser(req.body).then(function(user) {
-                res.json(user)
-            });
-        }
+        queries.findUser(req.body).then(function(user) {
+            console.log(user);
+            if (user) {
+                resError(res, 500, 'Email already exists!')
+            } else {
+                queries.postNewUser(req.body).then(function(user) {
+                    res.json(user)
+                });
+            }
+        })
     } else {
         resError(res, 500, 'Not a valid login!');
     }
@@ -29,10 +32,9 @@ router.post('/login', function(req, res, next) {
 })
 
 function validUser(user) {
-    return typeof user.name == 'string' &&
-        user.name.trim() !== '' &&
-        typeof user.email == 'string' &&
-        typeof user.password == 'string';
+    return typeof user.name == 'string' && user.name.trim() !== '' &&
+        typeof user.email == 'string' && user.email.trim() !== '' &&
+        typeof user.password == 'string' && user.password.trim() !== '';
 }
 
 function resError(res, statusCode, message) {
