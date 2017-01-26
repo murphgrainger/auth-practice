@@ -10,15 +10,8 @@ router.get('/', function(req, res, next) {
 
 router.post('/signup', function(req, res, next) {
     if (validUser(req.body)) {
-        queries.findUser(req.body).then(function(user) {
-            console.log(user);
-            if (user) {
-                resError(res, 500, 'Email already exists!')
-            } else {
-                queries.postNewUser(req.body).then(function(user) {
-                    res.json(user)
-                });
-            }
+        queries.postNewUser(req.body).then(function(user) {
+            res.json(user)
         })
     } else {
         resError(res, 500, 'Not a valid login!');
